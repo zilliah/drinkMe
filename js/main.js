@@ -5,17 +5,14 @@ let drink = {
     ingredients: document.querySelector("ul")
 };
 
-let findUrl = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=";
-// let ingrULR = "www.thecocktaildb.com/api/json/v1/1/filter.php?i=";
-
 document.querySelector("#search-name + button").addEventListener("click", findDrink);
 document.querySelector("input#search-name").addEventListener("change", findDrink);
-
-// document.querySelector("#search-ingredient + button").addEventListener("click", findIngredient);
-// document.querySelector("input#search-ingredient").addEventListener("change", findIngredient);
+document.querySelector("#search-ingredient + button").addEventListener("click", findIngredient);
+document.querySelector("input#search-ingredient").addEventListener("change", findIngredient);
 
 
 function findDrink() {
+    let findUrl = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=";
     let searchTerm = document.querySelector("input#search-name").value;
     searchTerm.replace(" ", "%20");
 
@@ -23,27 +20,25 @@ function findDrink() {
         .then(res => res.json())
         .then(data => {
             console.log(data);  
+            let i = 0;
 
             if (data.drinks == null) {
                 drink.name.textContent = "No drink found"
                 drink.instructions.textContent = `No drink found for '${searchTerm.replace("%20", " ")},' try searching for something else.`;
                 drink.photo.src = "";
             }
-
-            drink.photo.src = data.drinks[0].strDrinkThumb;
-            drink.name.textContent = data.drinks[0].strDrink;
-            drink.instructions.textContent = data.drinks[0].strInstructions;
+            
+            clearIngredients();
+            drink.photo.src = data.drinks[i].strDrinkThumb;
+            drink.name.textContent = data.drinks[i].strDrink;
+            drink.instructions.textContent = data.drinks[i].strInstructions;
 
             let ingredientCount = 1;
-            while (data.drinks[0]["strIngredient" + ingredientCount] !== null) {
-                
-                console.log(data.drinks[0]["strIngredient" + ingredientCount]);
-
+            while (data.drinks[i]["strIngredient" + ingredientCount] !== null) {
                 let li = document.createElement("li");
-
-                if (data.drinks[0]["strMeasure" + ingredientCount] == null) {
-                    li.textContent = data.drinks[0]["strIngredient" + ingredientCount];
-                } else li.textContent = data.drinks[0]["strMeasure" + ingredientCount] + " " + data.drinks[0]["strIngredient" + ingredientCount];
+                if (data.drinks[i]["strMeasure" + ingredientCount] == null) {
+                    li.textContent = data.drinks[i]["strIngredient" + ingredientCount];
+                } else li.textContent = data.drinks[i]["strMeasure" + ingredientCount] + " " + data.drinks[i]["strIngredient" + ingredientCount];
                 drink.ingredients.appendChild(li);
                 ingredientCount++;
             }
@@ -53,31 +48,52 @@ function findDrink() {
         });
 }
 
+function findIngredient() {
+    let ingrURL = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=";
+    let idURL = "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=";
+    let searchTerm = document.querySelector("input#search-ingredient").value;
+    searchTerm.replace(" ", "%20");
+    let drinkID = "";
+    
+    
+    fetch(ingrURL + searchTerm)
+        .then(res => res.json()) 
+        .then(data => {
+            console.log(data);  
+            let j = 0;
+            drinkID = data.drinks[j].idDrink;
+            console.log(drinkID);
+            })
+        .catch(err => {
+            console.log(`error ${err}`);
+            clearDrink();
+            drink.instructions.textContent = "No drinks found, please try another ingredient."
+    });
 
-// function findIngredient() {
-//     let searchTerm = document.querySelector("input#search-ingredient").value;
-//     searchTerm.replace(" ", "%20");
+    fetch("https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11052")
+    // fetch(idURL + drinkID)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(err => {
+            console.log(`error ${err}`);
+        })
+
+}
 
 
-//     fetch(ingrULR + searchTerm)
-//         .then(res => res.json()) // parse response as JSON
-//         .then(data => {
-//             console.log(data);  
+function clearDrink() {
+    clearIngredients();
+    drink.name.textContent = "";
+    drink.photo.src = "";
+    drink.instructions.textContent = "";
+}
 
-//             if (data.drinks == null) {
-//                 drink.name.textContent = "No drink found"
-//                 drink.instructions.textContent = "No drink found for that search, try searching for something else.";
-//                 drink.photo.src = "";
-//                 drink.ingredients.replaceChildren();
-//             }
+function clearIngredients() {
+    const liArr = document.querySelectorAll("li");
+    for (let node of liArr) {
+        drink.ingredients.removeChild(node);
+    }
+}
 
-//             drink.photo.src = data.drinks[0].strDrinkThumb;
-//             drink.name.textContent = data.drinks[0].strDrink;
-//             drink.instructions.textContent = data.drinks[0].strInstructions;
-//         })
-//         .catch(err => {
-//             console.log(`error ${err}`);
-//         });
-// }
-
-// "www.thecocktaildb.com/api/json/v1/1/filter.php?i=Gin"
