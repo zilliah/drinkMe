@@ -28,20 +28,7 @@ function findDrink() {
                 drink.photo.src = "";
             }
             
-            clearIngredients();
-            drink.photo.src = data.drinks[i].strDrinkThumb;
-            drink.name.textContent = data.drinks[i].strDrink;
-            drink.instructions.textContent = data.drinks[i].strInstructions;
-
-            let ingredientCount = 1;
-            while (data.drinks[i]["strIngredient" + ingredientCount] !== null) {
-                let li = document.createElement("li");
-                if (data.drinks[i]["strMeasure" + ingredientCount] == null) {
-                    li.textContent = data.drinks[i]["strIngredient" + ingredientCount];
-                } else li.textContent = data.drinks[i]["strMeasure" + ingredientCount] + " " + data.drinks[i]["strIngredient" + ingredientCount];
-                drink.ingredients.appendChild(li);
-                ingredientCount++;
-            }
+            updateDrink(data, 0);
         })
         .catch(err => { 
             console.log(`error ${err}`);
@@ -62,7 +49,15 @@ function findIngredient() {
             console.log(data);  
             let j = 0;
             drinkID = data.drinks[j].idDrink;
-            console.log(drinkID);
+            fetch(idURL + drinkID)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    updateDrink(data, j);
+                })
+                .catch(err => {
+                    console.log(`error ${err}`);
+                })
             })
         .catch(err => {
             console.log(`error ${err}`);
@@ -70,30 +65,34 @@ function findIngredient() {
             drink.instructions.textContent = "No drinks found, please try another ingredient."
     });
 
-    fetch("https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11052")
-    // fetch(idURL + drinkID)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(err => {
-            console.log(`error ${err}`);
-        })
+    
 
 }
 
-
 function clearDrink() {
-    clearIngredients();
+    const liArr = document.querySelectorAll("li");
+    for (let node of liArr) {
+        drink.ingredients.removeChild(node);
+    }
     drink.name.textContent = "";
     drink.photo.src = "";
     drink.instructions.textContent = "";
 }
 
-function clearIngredients() {
-    const liArr = document.querySelectorAll("li");
-    for (let node of liArr) {
-        drink.ingredients.removeChild(node);
-    }
-}
+function updateDrink(data, index) {
+    clearDrink();
+    drink.photo.src =  data.drinks[index].strDrinkThumb;
+    drink.name.textContent = data.drinks[index].strDrink;
+    drink.instructions.textContent = data.drinks[index].strInstructions;
 
+    let ingredientCount = 1;
+    while (data.drinks[index]["strIngredient" + ingredientCount] !== null) {
+        let li = document.createElement("li");
+        if (data.drinks[index]["strMeasure" + ingredientCount] == null) {
+            li.textContent = data.drinks[index]["strIngredient" + ingredientCount];
+        } else li.textContent = data.drinks[index]["strMeasure" + ingredientCount] + " " + data.drinks[index]["strIngredient" + ingredientCount];
+        drink.ingredients.appendChild(li);
+        ingredientCount++;
+    }
+
+}
