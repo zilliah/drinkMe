@@ -9,7 +9,7 @@ document.querySelector("#search-name + button").addEventListener("click", findDr
 document.querySelector("input#search-name").addEventListener("change", findDrink);
 document.querySelector("#search-ingredient + button").addEventListener("click", findIngredient);
 document.querySelector("input#search-ingredient").addEventListener("change", findIngredient);
-
+document.querySelector("#random").addEventListener("click", findRandom);
 
 function findDrink() {
     let findUrl = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=";
@@ -65,6 +65,19 @@ function findIngredient() {
 
 }
 
+function findRandom() {
+    fetch("https://www.thecocktaildb.com/api/json/v1/1/random.php")
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);  
+            updateDrink(data, 0);
+        })
+        .catch(err => { 
+            console.log(`error ${err}`);
+            noMatch(null);
+        });
+}
+
 function clearDrink() {
     const liArr = document.querySelectorAll("li");
     for (let node of liArr) {
@@ -95,6 +108,7 @@ function updateDrink(data, index) {
 
 function noMatch(search) {
     clearDrink();
-    drink.instructions.textContent = `No drinks found for '${search},' please try another search.`;
     drink.name.textContent = "No drink found";
+    if (search === null) drink.instructions.textContent = "Unknown error - please try again.";
+    else drink.instructions.textContent = `No drinks found for '${search},' please try another search.`;
 }
