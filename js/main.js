@@ -16,19 +16,21 @@ function findDrink() {
     let searchTerm = document.querySelector("input#search-name").value;
     if (searchTerm === "" | searchTerm === /\s+/) noMatch(searchTerm);
     searchTerm.replace(" ", "%20");
-
+    
     fetch(findUrl + searchTerm)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);  
-            let i = 0;
-            if (data.drinks == null) noMatch(searchTerm);
-            updateDrink(data, i);
-        })
-        .catch(err => { 
-            console.log(`error ${err}`);
-            noMatch(searchTerm);
-        });
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);  
+        let i = 0;
+        if (data.drinks == null) noMatch(searchTerm);
+        updateDrink(data, i);
+        document.querySelector("#another").addEventListener("click", nextDrink(data, i));
+    })
+    .catch(err => { 
+        console.log(`error ${err}`);
+        noMatch(searchTerm);
+    });
+        
 }
 
 function findIngredient() {
@@ -38,35 +40,42 @@ function findIngredient() {
     searchTerm.replace(" ", "%20");
     let drinkID = "";
     
-    
     fetch(ingrURL + searchTerm)
         .then(res => res.json()) 
         .then(data => {
             console.log(data);  
             let j = 0;
             drinkID = data.drinks[j].idDrink;
+
+            //this doesn't work bc of the separation in fetch requests, hmm
+            //i think puttng the 2nd fetch into the eventlistener function might help here?
+            
             fetch(idURL + drinkID)
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                    updateDrink(data, j);
-                })
-                .catch(err => {
-                    console.log(`error ${err}`);
-                    noMatch();
-                })
+            .then(res => res.json())
+            .then(datum => {
+                updateDrink(datum, j);
             })
+            .catch(err => {
+                console.log(`error ${err}`);
+                noMatch();
+            })
+            document.querySelector("#another").addEventListener("click", function() {
+                //i think i'll need to put a similar fetch in here
+            });
+
+            
+
+
+        })
         .catch(err => {
             console.log(`error ${err}`);
             noMatch(searchTerm);
     });
 
-    
-
 }
 
 function findRandom() {
-    fetch("https://www.thecocktaildb.com/api/json/v1/1/random.php")
+    fetch("https://www.thecocktaildb.co0m/api/json/v1/1/random.php")
         .then(res => res.json())
         .then(data => {
             console.log(data);  
@@ -77,6 +86,7 @@ function findRandom() {
             noMatch(null);
         });
 }
+
 
 function clearDrink() {
     const liArr = document.querySelectorAll("li");
@@ -111,4 +121,12 @@ function noMatch(search) {
     drink.name.textContent = "No drink found";
     if (search === null) drink.instructions.textContent = "Unknown error - please try again.";
     else drink.instructions.textContent = `No drinks found for '${search},' please try another search.`;
+}
+
+function nextDrink(data, index) {
+    return function() {
+        if (index < data.drinks.length - 1) index++;
+        else index = 0;
+        updateDrink(data, index);
+    }
 }
