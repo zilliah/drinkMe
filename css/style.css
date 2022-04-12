@@ -7,6 +7,13 @@
   box-sizing: border-box;
 }
 
+:root {
+  font-size: 62.5%;
+  background-color: rgb(255, 253, 246);
+  color: rgb(34, 34, 34);
+  font-family: 'Raleway', sans-serif;
+}
+
 /******************************************
 /* LAYOUT
 /*******************************************/
@@ -20,3 +27,22 @@ img{
 /******************************************
 /* ADDITIONAL STYLES
 /*******************************************/
+input, label, button, li, p {
+  font-size: 1.85rem;
+}
+
+h1 {
+  font-size: 4.7rem;
+}
+
+h2 {
+  font-size: 3rem;
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+.next {
+  display: none;
+}

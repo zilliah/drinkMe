@@ -10,12 +10,14 @@ document.querySelector("input#search-name").addEventListener("change", findDrink
 document.querySelector("#search-ingredient + button").addEventListener("click", findIngredient);
 document.querySelector("input#search-ingredient").addEventListener("change", findIngredient);
 document.querySelector("#random").addEventListener("click", findRandom);
+const anotherDrink = document.querySelector("section.next");
 
 function findDrink() {
     let findUrl = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=";
     let searchTerm = document.querySelector("input#search-name").value;
     if (searchTerm === "" | searchTerm === /\s+/) noMatch(searchTerm);
     searchTerm.replace(" ", "%20");
+    
     
     fetch(findUrl + searchTerm)
     .then(res => res.json())
@@ -25,12 +27,13 @@ function findDrink() {
         if (data.drinks == null) noMatch(searchTerm);
         updateDrink(data, i);
         document.querySelector("#another").addEventListener("click", nextDrink(data, i));
+        anotherDrink.classList.remove("next");
     })
     .catch(err => { 
         console.log(`error ${err}`);
         noMatch(searchTerm);
     });
-        
+    
 }
 
 function findIngredient() {
@@ -51,6 +54,7 @@ function findIngredient() {
             .then(res => res.json())
             .then(datum => {
                 updateDrink(datum, j);
+                anotherDrink.classList.remove("next");
             })
             .catch(err => {
                 console.log(`error ${err}`);
@@ -62,10 +66,12 @@ function findIngredient() {
                 drinkID = data.drinks[j].idDrink;
                 
                 fetch(idURL + drinkID)
-                    .then(res => res.json())
-                    .then(datum => {
-                        console.log(datum);
-                        updateDrink(datum, 0);
+                .then(res => res.json())
+                .then(datum => {
+                    console.log(datum);
+                    updateDrink(datum, 0);
+                    anotherDrink.classList.remove("next");
+
                     })
                     .catch(err => {
                         console.log(`error ${err}`);
@@ -90,6 +96,7 @@ function findRandom() {
             console.log(`error ${err}`);
             noMatch(null);
         });
+
 }
 
 
@@ -101,6 +108,7 @@ function clearDrink() {
     drink.name.textContent = "";
     drink.photo.src = "";
     drink.instructions.textContent = "";
+    anotherDrink.classList.add("next");
 }
 
 function updateDrink(data, index) {
@@ -124,6 +132,7 @@ function updateDrink(data, index) {
 function noMatch(search) {
     clearDrink();
     drink.name.textContent = "No drink found";
+    anotherDrink.classList.add("next");
     if (search === null) drink.instructions.textContent = "Unknown error - please try again.";
     else drink.instructions.textContent = `No drinks found for "${search}" please try another search.`;
 }
@@ -133,5 +142,7 @@ function nextDrink(data, index) {
         if (index < data.drinks.length - 1) index++;
         else index = 0;
         updateDrink(data, index);
+        anotherDrink.classList.remove("next");
+
     }
 }
