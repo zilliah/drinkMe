@@ -56,7 +56,7 @@ function findIngredient() {
                 console.log(`error ${err}`);
                 noMatch();
             })
-            
+
             document.querySelector("#another").addEventListener("click", function() {
                 j++;
                 drinkID = data.drinks[j].idDrink;
@@ -80,7 +80,7 @@ function findIngredient() {
 }
 
 function findRandom() {
-    fetch("https://www.thecocktaildb.co0m/api/json/v1/1/random.php")
+    fetch("https://www.thecocktaildb.com/api/json/v1/1/random.php")
         .then(res => res.json())
         .then(data => {
             console.log(data);  
