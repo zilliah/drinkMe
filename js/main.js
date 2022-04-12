@@ -46,9 +46,6 @@ function findIngredient() {
             console.log(data);  
             let j = 0;
             drinkID = data.drinks[j].idDrink;
-
-            //this doesn't work bc of the separation in fetch requests, hmm
-            //i think puttng the 2nd fetch into the eventlistener function might help here?
             
             fetch(idURL + drinkID)
             .then(res => res.json())
@@ -59,19 +56,27 @@ function findIngredient() {
                 console.log(`error ${err}`);
                 noMatch();
             })
-            document.querySelector("#another").addEventListener("click", function() {
-                //i think i'll need to put a similar fetch in here
-            });
-
             
-
-
+            document.querySelector("#another").addEventListener("click", function() {
+                j++;
+                drinkID = data.drinks[j].idDrink;
+                
+                fetch(idURL + drinkID)
+                    .then(res => res.json())
+                    .then(datum => {
+                        console.log(datum);
+                        updateDrink(datum, 0);
+                    })
+                    .catch(err => {
+                        console.log(`error ${err}`);
+                        noMatch();
+                })
+            });
         })
         .catch(err => {
             console.log(`error ${err}`);
             noMatch(searchTerm);
     });
-
 }
 
 function findRandom() {
@@ -120,7 +125,7 @@ function noMatch(search) {
     clearDrink();
     drink.name.textContent = "No drink found";
     if (search === null) drink.instructions.textContent = "Unknown error - please try again.";
-    else drink.instructions.textContent = `No drinks found for '${search},' please try another search.`;
+    else drink.instructions.textContent = `No drinks found for "${search}" please try another search.`;
 }
 
 function nextDrink(data, index) {
