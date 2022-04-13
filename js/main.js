@@ -1,7 +1,7 @@
 let drink = {
-    name: document.querySelector("section > h2"),
+    name: document.querySelector("section > div > h2"),
     photo: document.querySelector("img"),
-    instructions: document.querySelector("ul + h3 + p"),
+    instructions: document.querySelector("p"),
     ingredients: document.querySelector("ul")
 };
 

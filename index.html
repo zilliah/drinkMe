@@ -16,41 +16,48 @@
 	<body>
 
 		<h1>Drink Me</h1>
-		<h2>Cocktail Picker</h2>
-
-		<section>
+		<h2>Find your perfect cocktail</h2>
+		<fieldset class="grid-container">
+			<legend>Cocktail Picker</legend>
+	
 			<label for="search-name">By name:</label>
 			<input type="text" name="search-name" id="search-name" value="">
 			<button type="button" name="button">Get Cocktail</button>
-		</section>
 
-		<section>
 			<label for="search-ingredient">By ingredient:</label>
 			<input type="text" name="search-ingredient" id="search-ingredient" value="">
 			<button type="button" name="button">Get Cocktail</button>
-		</section>
 
-		<section>
 			<label for="random">Give me a random cocktail!</label>
 			<button type="button" id="random">Random </button>
-		</section>
+		</fieldset>
+
 
 		
 		
-		<section>
-			<img src="" alt="">
-			<h2></h2>
-			<h3>Ingredients</h3>
-			<ul>
-			</ul>
-			<h3>Instructions</h3>
-			<p></p>
+		<section class="results">
+			<div class="grid-container">
+				<h2></h2>
+				<img src="" alt="">
+				<div>
+					<fieldset>
+						<legend>Ingredients</legend>
+						<ul>
+						</ul>
+					</fieldset>
+					<fieldset>
+						<legend>Instructions</legend>
+						<p></p>
+					</fieldset>
+
+					<section class="next">
+						<label for="another">I don't like this, give me something else that matches my search: </label>
+						<button type="button" id="another">Next drink</button>
+					</section>
+				</div>
+			</div>
 		</section>
 		
-		<section class="next">
-			<label for="another">I don't like this, give me something else that matches my search: </label>
-			<button type="button" id="another">Next drink</button>
-		</section>
 
 		<script type="text/javascript" src="js/main.js"></script>
 	</body>
